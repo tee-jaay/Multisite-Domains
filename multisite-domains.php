@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Multisite Domains
  * Description: Retrieves a cleaned list of domains in a multisite installation.
- * Version: 1.0.0
+ * Version: 1.0.2
  * Author: Tamjid Bhuiyan
  * Author URI: https://devapps.uk
  * License: GPLv2 or later
@@ -41,9 +41,15 @@ function get_clean_multisite_domains() {
         if ($site->blog_id == 1) {
             continue;
         }
-        // Extract the unique domain from the path
-        $path_parts = explode('-', trim($site->path, '/'));
-        $cleaned_domain = isset($path_parts[0]) ? $path_parts[0] . '.com' : $site->domain;
+
+        // Extract subsite path and clean it
+        $path = trim($site->path, '/');
+        $path_parts = explode('-', $path);
+
+        // Construct the domain dynamically from the path
+        $cleaned_domain = isset($path_parts[1]) 
+            ? $path_parts[0] . '.' . $path_parts[1] 
+            : $site->domain; // Fallback to domain if TLD not found
 
         // Build the cleaned domain array
         $cleaned_domains[] = [
